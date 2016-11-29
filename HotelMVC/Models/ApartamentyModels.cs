@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace HotelMVC.Models
 {
@@ -18,10 +19,8 @@ namespace HotelMVC.Models
 
     public class ApartamentyFilterViewModel
     {
-        public List<string> MiastaWszystkie { get; set; }
         public string Miasto { get; set; }
 
-        public List<Udogodnienia> WszystkieUdogodnienia { get; set; }
         [Display(Name = "Udogodnienia")]
         public int[] WybraneUdogodeniniaIds { get; set; }
 

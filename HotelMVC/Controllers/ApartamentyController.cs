@@ -26,7 +26,9 @@ namespace HotelMVC.Controllers
             lista.AddRange(rez);
             ViewData["MiastaList"] = lista;
 
-            return View(new ApartamentyFilterViewModel());
+            ViewData["UdogodnieniaList"] = db.Udogodnienia.ToList();
+
+            return View(new ApartamentyFilterViewModel() { WybraneUdogodeniniaIds = new int[] { } });
         }
 
         [HttpPost]
@@ -37,6 +39,8 @@ namespace HotelMVC.Controllers
             var rez = db.Apartamenty.Select(x => x.Miasto).Distinct().ToList().Select(m => new SelectListItem() { Value = m, Text = m }).ToList();
             lista.AddRange(rez);
             ViewData["MiastaList"] = lista;
+
+            ViewData["UdogodnieniaList"] = db.Udogodnienia.ToList();
 
             return View(model);
         }
@@ -246,18 +250,31 @@ namespace HotelMVC.Controllers
         [ChildActionOnly]
         public ActionResult ApartamentyLista(ApartamentyFilterViewModel filtr)
         {
-            var predicate = PredicateBuilder.New<Apartamenty>(true);
+            var predicate1 = PredicateBuilder.New<Apartamenty>(true);
 
-            if (!String.IsNullOrEmpty(filtr.Miasto)) { predicate = predicate.And(a => a.Miasto == filtr.Miasto); }
-            if (filtr.CenaOd.HasValue && filtr.CenaOd != 0) { predicate = predicate.And(a => a.Cena >= filtr.CenaOd); }
-            if (filtr.CenaDo.HasValue && filtr.CenaDo != 0) { predicate = predicate.And(a => a.Cena <= filtr.CenaDo); }
-            if (filtr.IleOsob.HasValue && filtr.IleOsob != 0) { predicate = predicate.And(a => a.IloscOsob == a.IloscOsob); }
-            
+            if (!String.IsNullOrEmpty(filtr.Miasto)) { predicate1 = predicate1.And(a => a.Miasto == filtr.Miasto); }
+            if (filtr.CenaOd.HasValue && filtr.CenaOd != 0) { predicate1 = predicate1.And(a => a.Cena >= filtr.CenaOd); }
+            if (filtr.CenaDo.HasValue && filtr.CenaDo != 0) { predicate1 = predicate1.And(a => a.Cena <= filtr.CenaDo); }
+            if (filtr.IleOsob.HasValue && filtr.IleOsob != 0) { predicate1 = predicate1.And(a => a.IloscOsob == filtr.IleOsob); }
 
-            var result = db.Apartamenty.Where(predicate)
+            var predicate2 = PredicateBuilder.New<Apartamenty>(true);
+            predicate2 = predicate2.And(a => a.Wizyty != null && !a.Wizyty.Any(w => !(w.DataOd > filtr.DataDo || w.DataDo < filtr.DataOd)));
+
+            if (filtr.WybraneUdogodeniniaIds != null)
+                foreach (var item in filtr.WybraneUdogodeniniaIds)
+                {
+                    predicate2 = predicate2.And(a => a.UdogodnieniaApartamenty != null && a.UdogodnieniaApartamenty.Any(x => x.IdUdogodnienia == item));
+                }
+
+            var result = db.Apartamenty.Where(predicate1)
                 .Include("UdogodnieniaApartamenty.Udogodnienie").ToList()
-                .Select(a => new ApartamentyDisplayViewModel(a))
-                .OrderBy(x => x.Ocena).ThenBy(y => y.Nazwa).ToList();
+                .Where(predicate2)
+                .Select(a => new ApartamentyDisplayViewModel(a));
+
+            if (result.Any())
+            {
+                result = result.OrderBy(x => x.Ocena).ThenBy(y => y.Nazwa).ToList();
+            }
 
             return PartialView("_ApartamentyLista", result);
         }
