@@ -1,0 +1,83 @@
+﻿@model IEnumerable<HotelMVC.Models.WizytyDisplayViewModel>
+
+@{
+    ViewBag.Title = "MojeWizyty";
+}
+
+<h2>MojeWizyty</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Apartament.Nazwa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KlientImieNazwisko)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataRezerwacji)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataWplaty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataOd)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataDo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Komentarz)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ocena)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Odpowiedz)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apartament.Nazwa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KlientImieNazwisko)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataRezerwacji)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataWplaty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataOd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataDo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Komentarz)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ocena)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Odpowiedz)
+            </td>
+            @if (String.IsNullOrEmpty(item.Komentarz))
+            {
+            <td>
+                @Html.ActionLink("Dodaj komentarz", "Edit", new { id = item.IdWizyty })
+            </td>
+            }
+        </tr>
+    }
+
+</table>

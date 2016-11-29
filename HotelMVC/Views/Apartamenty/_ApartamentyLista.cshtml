@@ -1,0 +1,86 @@
+﻿@model IEnumerable<HotelMVC.Models.ApartamentyDisplayViewModel>
+@{
+    ViewBag.Title = "_ApartamentyLista";
+}
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Nazwa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Cena)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IloscOsob)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Opis)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ulica)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Miasto)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KodPocztowy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.WlascicielImieNazwisko)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Udogodnienia)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IloscWizyt)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Ocena)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nazwa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cena)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IloscOsob)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Opis)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ulica)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Miasto)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KodPocztowy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WlascicielImieNazwisko)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Udogodnienia)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IloscWizyt)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Ocena)
+            </td>
+            <td>
+                @Html.ActionLink("Rezerwuj", "Details", new { id = item.IdApartamentu })
+            </td>
+        </tr>
+    }
+
+</table>
