@@ -16,6 +16,7 @@ C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\HotelMVC.pdb
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Antlr3.Runtime.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\EntityFramework.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\EntityFramework.SqlServer.dll
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\LinqKit.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.AspNet.Identity.Core.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.AspNet.Identity.EntityFramework.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.AspNet.Identity.Owin.dll
@@ -30,6 +31,7 @@ C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Ow
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.Security.OAuth.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.Security.Twitter.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Web.Infrastructure.dll
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\MvcCheckBoxList.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Newtonsoft.Json.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Owin.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.Helpers.dll
@@ -40,6 +42,10 @@ C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.W
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.WebPages.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.WebPages.Razor.dll
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\WebGrease.dll
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\EntityFramework.xml
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\EntityFramework.SqlServer.xml
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\LinqKit.xml
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.AspNet.Identity.EntityFramework.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.Helpers.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.Mvc.xml
@@ -50,11 +56,8 @@ C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.W
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\System.Web.WebPages.Razor.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Antlr3.Runtime.pdb
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Newtonsoft.Json.xml
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\EntityFramework.xml
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\EntityFramework.SqlServer.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.AspNet.Identity.Core.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.AspNet.Identity.Owin.xml
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.AspNet.Identity.EntityFramework.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.Host.SystemWeb.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.Security.xml
@@ -64,11 +67,8 @@ C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Ow
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.Security.Google.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.Security.Twitter.xml
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\obj\Debug\HotelMVC.dll
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\obj\Debug\HotelMVC.pdb
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\obj\Debug\HotelMVC.Migrations.InitialCreate.resources
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\obj\Debug\HotelMVC.csproj.GenerateResource.Cache
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\MvcCheckBoxList.dll
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\obj\Debug\HotelMVC.dll
+C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\obj\Debug\HotelMVC.pdb
 C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\obj\Debug\HotelMVC.csprojResolveAssemblyReference.cache
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\LinqKit.dll
-C:\Users\marta.tyrka.PROFERIS\Documents\WiWLM\HotelMVC\HotelMVC\bin\LinqKit.xml

@@ -28,7 +28,14 @@ namespace HotelMVC.Controllers
 
             ViewData["UdogodnieniaList"] = db.Udogodnienia.ToList();
 
-            return View(new ApartamentyFilterViewModel() { WybraneUdogodeniniaIds = new int[] { } });
+            var model = new ApartamentyFilterViewModel()
+            {
+                WybraneUdogodeniniaIds = new int[] { },
+                DataDo = DateTime.Now,
+                DataOd = DateTime.Now
+            };
+
+            return View(model);
         }
 
         [HttpPost]
@@ -41,6 +48,8 @@ namespace HotelMVC.Controllers
             ViewData["MiastaList"] = lista;
 
             ViewData["UdogodnieniaList"] = db.Udogodnienia.ToList();
+
+            if (model.WybraneUdogodeniniaIds == null) model.WybraneUdogodeniniaIds = new int[] { };
 
             return View(model);
         }
@@ -258,7 +267,7 @@ namespace HotelMVC.Controllers
             if (filtr.IleOsob.HasValue && filtr.IleOsob != 0) { predicate1 = predicate1.And(a => a.IloscOsob == filtr.IleOsob); }
 
             var predicate2 = PredicateBuilder.New<Apartamenty>(true);
-            predicate2 = predicate2.And(a => a.Wizyty != null && !a.Wizyty.Any(w => !(w.DataOd > filtr.DataDo || w.DataDo < filtr.DataOd)));
+            predicate2 = predicate2.And(a => a.Wizyty == null || !a.Wizyty.Any(w => !(w.DataOd > filtr.DataDo || w.DataDo < filtr.DataOd)));
 
             if (filtr.WybraneUdogodeniniaIds != null)
                 foreach (var item in filtr.WybraneUdogodeniniaIds)

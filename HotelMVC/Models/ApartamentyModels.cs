@@ -33,8 +33,10 @@ namespace HotelMVC.Models
         public decimal? CenaDo { get; set; }
 
         [Display(Name = "Data od")]
+        [DataType(DataType.Date)]
         public DateTime DataOd { get; set; }
         [Display(Name = "Data do")]
+        [DataType(DataType.Date)]
         public DateTime DataDo { get; set; }
     }
 
