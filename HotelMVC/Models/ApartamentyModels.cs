@@ -91,7 +91,7 @@ namespace HotelMVC.Models
                 if (this.Wizyty == null)
                     return 0;
                 else
-                    return this.Wizyty.Count(w => w.DataDo > DateTime.Now);
+                    return this.Wizyty.Count(w => w.DataDo > DateTime.Today);
             }
         }
 
@@ -106,6 +106,23 @@ namespace HotelMVC.Models
                     return this.Wizyty.Average(u => (decimal)u.Ocena);
             }
         }
+    }
+
+    public class ApartamentyReservationViewModel : ApartamentyDisplayViewModel
+    {
+        public ApartamentyReservationViewModel() { }
+
+        public ApartamentyReservationViewModel(Apartamenty ap) : base(ap) { }
+
+        [Display(Name = "Data od")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime DataOd { get; set; }
+
+        [Display(Name = "Data do")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        public DateTime DataDo { get; set; }
     }
 
     public class WizytyDisplayViewModel : Wizyty

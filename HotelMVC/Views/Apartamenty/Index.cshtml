@@ -8,7 +8,11 @@
 
     <script type="text/javascript">
         $(function () {
-            $(".datepicker").datepicker();
+            var minshowdate = new Date(@(DateTime.Now.AddMonths(-1).Year),
+                           @(DateTime.Now.AddMonths(-1).Month ),
+                           @(DateTime.Now.AddMonths(-1).Day));
+
+            $(".datepicker").datepicker({ dateFormat: 'dd-mm-yy', minDate: minshowdate });
         });
     </script>
 
@@ -55,14 +59,14 @@
                         <div class="form-group">
                             @Html.LabelFor(model => model.DataOd, new { @class = "col-md-2 control-label", @style = "font-size:15px; font-weight:bold" })
                             <div class="col-md-10">
-                                @Html.TextBoxFor(model => model.DataOd, "{0:dd/MM/yyyy}", new { @class = "form-control datepicker" })
+                                @Html.TextBoxFor(model => model.DataOd, "{0:dd-MM-yyyy}", new { @class = "form-control datepicker" })
                             </div>
                         </div>
 
                         <div class="form-group">
                             @Html.LabelFor(model => model.DataDo, new { @class = "col-md-2 control-label", @style = "font-size:15px; font-weight:bold" })
                             <div class="col-md-10">
-                                @Html.TextBoxFor(model => model.DataDo, "{0:dd/MM/yyyy}", new { @class = "form-control datepicker" })
+                                @Html.TextBoxFor(model => model.DataDo, "{0:dd-MM-yyyy}", new { @class = "form-control datepicker" })
                             </div>
                         </div>
 
@@ -76,7 +80,7 @@
                         <div class="form-group" style="margin-top:-85px">
                             @Html.LabelFor(model => model.WybraneUdogodeniniaIds, htmlAttributes: new { @class = "control-label col-md-2", @style = "font-size:15px; font-weight:bold" })
                         </div>
-                        <div class="col-md-10"style="margin-top:-30px">
+                        <div class="col-md-10" style="margin-top:-30px">
                             <ul style="font-size:15px; font-weight:bold">
                                 @foreach (var g in (List<HotelMVC.Models.Udogodnienia>)ViewData["UdogodnieniaList"])
                                 {
@@ -84,10 +88,10 @@
                                         <input type="checkbox"
                                                name="WybraneUdogodeniniaIds"
                                                value="@g.IdUdogodnienia" id="@g.IdUdogodnienia"
-                                               @{if (Model.WybraneUdogodeniniaIds.Contains(g.IdUdogodnienia)) { <text> checked='checked' </text>                         } } />
+                                               @{if (Model.WybraneUdogodeniniaIds.Contains(g.IdUdogodnienia)) { <text> checked='checked' </text>                                } } />
                                         <label for="@g.IdUdogodnienia" style="font-size:15px; font-weight:bold">@g.Nazwa</label>
                                     </li>
-                                                   }
+    }
                             </ul>
                         </div>
 

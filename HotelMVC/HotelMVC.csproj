@@ -398,6 +398,7 @@
     <Content Include="Views\Account\Delete.cshtml" />
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Apartamenty\_ApartamentyLista.cshtml" />
+    <Content Include="Views\Apartamenty\Apartament.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

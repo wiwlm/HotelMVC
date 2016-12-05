@@ -96,3 +96,25 @@
     @Html.ActionLink("Edit", "Edit", new { id = Model.IdApartamentu }) |
     @Html.ActionLink("Back to List", "Index")
 </p>
+
+<div>
+    <h4>Komentarze</h4>
+    @if (Model.Wizyty == null || !Model.Wizyty.Any(w => !String.IsNullOrEmpty(w.Komentarz)))
+    {
+        <p>Brak komentarzy</p>
+    }
+    else
+    {
+        foreach (var item in Model.Wizyty.Where(w => !String.IsNullOrEmpty(w.Komentarz)).OrderByDescending(d => d.DataOd))
+        {
+            var wiz = new HotelMVC.Models.WizytyDisplayViewModel(item);
+            <h6>@wiz.KlientImieNazwisko (wizyta @wiz.DataOd.ToShortDateString() - @wiz.DataDo.ToShortDateString()) skomentował(a):</h6>
+            <p>
+                Ocena: @wiz.Ocena
+            </p>
+            <p>
+                @wiz.Komentarz
+            </p>
+        }
+    }
+</div>

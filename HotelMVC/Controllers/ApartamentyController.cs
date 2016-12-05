@@ -10,6 +10,7 @@ using HotelMVC.Models;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using LinqKit;
+using System.Globalization;
 
 namespace HotelMVC.Controllers
 {
@@ -24,15 +25,15 @@ namespace HotelMVC.Controllers
             lista.Add(new SelectListItem() { Value = "", Text = "---" });
             var rez = db.Apartamenty.Select(x => x.Miasto).Distinct().ToList().Select(m => new SelectListItem() { Value = m, Text = m }).ToList();
             lista.AddRange(rez);
-            ViewData["MiastaList"] = lista;
 
+            ViewData["MiastaList"] = lista;
             ViewData["UdogodnieniaList"] = db.Udogodnienia.ToList();
 
             var model = new ApartamentyFilterViewModel()
             {
                 WybraneUdogodeniniaIds = new int[] { },
-                DataDo = DateTime.Now,
-                DataOd = DateTime.Now
+                DataDo = DateTime.Today,
+                DataOd = DateTime.Today
             };
 
             return View(model);
@@ -45,13 +46,74 @@ namespace HotelMVC.Controllers
             lista.Add(new SelectListItem() { Value = "", Text = "---" });
             var rez = db.Apartamenty.Select(x => x.Miasto).Distinct().ToList().Select(m => new SelectListItem() { Value = m, Text = m }).ToList();
             lista.AddRange(rez);
-            ViewData["MiastaList"] = lista;
 
+            ViewData["MiastaList"] = lista;
             ViewData["UdogodnieniaList"] = db.Udogodnienia.ToList();
 
             if (model.WybraneUdogodeniniaIds == null) model.WybraneUdogodeniniaIds = new int[] { };
 
             return View(model);
+        }
+
+        public ActionResult Apartament(int Id, string dataOd, string dataDo)
+        {
+            var ap = db.Apartamenty.Include("UdogodnieniaApartamenty.Udogodnienie").First(x => x.IdApartamentu == Id);
+
+            var model = new ApartamentyReservationViewModel(ap)
+            {
+                DataOd = DateTime.Parse(dataDo),
+                DataDo = DateTime.Parse(dataDo)
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Apartament(ApartamentyReservationViewModel model)
+        {
+            var userId = User.Identity.GetUserId();
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account",
+                    new
+                    {
+                        returnUrl = Request.Url.AbsolutePath + "?dataOd=" + this.DateTimeToString(model.DataOd) + "&dataDo=" + this.DateTimeToString(model.DataDo)
+                    });
+            }
+
+            var ap = db.Apartamenty.Include("UdogodnieniaApartamenty.Udogodnienie").First(x => x.IdApartamentu == model.IdApartamentu);
+
+            if (db.Wizyty == null || !db.Wizyty.Any(w => w.IdApartamentu == model.IdApartamentu && !(w.DataOd > model.DataDo || w.DataDo < model.DataOd)))
+            {
+                if (ap.Wizyty == null)
+                    ap.Wizyty = new List<Wizyty>();
+
+                db.Wizyty.Add(new Wizyty()
+                {
+                    IdApartamentu = model.IdApartamentu,
+                    DataOd = model.DataOd,
+                    DataDo = model.DataDo,
+                    DataRezerwacji = DateTime.Today,
+                    IdKlient = userId
+                });
+
+                db.SaveChanges();
+
+                return RedirectToAction("MojeWizyty");
+            }
+            else
+            {
+                ViewData["errorInfo"] = "Nie można zarezerwować apartamentu. W dniach " + model.DataOd.ToShortDateString() + " - " + model.DataDo.ToShortDateString() + " jest on niedostępny.";
+
+                model = new ApartamentyReservationViewModel(ap)
+                {
+                    DataOd = model.DataOd,
+                    DataDo = model.DataDo
+                };
+
+                return View(model);
+            }
         }
 
         public ActionResult MojeApartamenty()
@@ -181,13 +243,21 @@ namespace HotelMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                Apartamenty ap = model.Apartament;
+                Apartamenty ap_new = model.Apartament;
 
-                ap.IdWlasciciel = User.Identity.GetUserId();
-                db.Apartamenty.Add(ap);
+                Apartamenty ap_old = db.Apartamenty.Find(ap_new.IdApartamentu);
+
+                ap_old.Cena = ap_new.Cena;
+                ap_old.IloscOsob = ap_new.IloscOsob;
+                ap_old.KodPocztowy = ap_new.KodPocztowy;
+                ap_old.Miasto = ap_new.Miasto;
+                ap_old.Nazwa = ap_new.Nazwa;
+                ap_old.Opis = ap_new.Opis;
+                ap_old.Ulica = ap_new.Ulica;
+                ap_old.IdWlasciciel = User.Identity.GetUserId();
                 db.SaveChanges();
 
-                List<UdogodnieniaApartamenty> udogodnieniaApartamentyOld = db.UdogodnieniaApartamenty.Where(x => x.IdApartamentu == ap.IdApartamentu).ToList();
+                List<UdogodnieniaApartamenty> udogodnieniaApartamentyOld = db.UdogodnieniaApartamenty.Where(x => x.IdApartamentu == ap_new.IdApartamentu).ToList();
                 db.UdogodnieniaApartamenty.RemoveRange(udogodnieniaApartamentyOld);
 
                 List<UdogodnieniaApartamenty> udogodnieniaApartamenty = new List<UdogodnieniaApartamenty>();
@@ -196,7 +266,7 @@ namespace HotelMVC.Controllers
                 {
                     db.UdogodnieniaApartamenty.Add(new UdogodnieniaApartamenty()
                     {
-                        IdApartamentu = ap.IdApartamentu,
+                        IdApartamentu = ap_new.IdApartamentu,
                         IdUdogodnienia = u
                     });
                 }
@@ -244,7 +314,7 @@ namespace HotelMVC.Controllers
             Apartamenty apartament = db.Apartamenty.Find(id);
             db.Apartamenty.Remove(apartament);
             db.SaveChanges();
-            return RedirectToAction("Index");
+            return RedirectToAction("MojeApartamenty");
         }
 
         protected override void Dispose(bool disposing)
@@ -285,7 +355,15 @@ namespace HotelMVC.Controllers
                 result = result.OrderBy(x => x.Ocena).ThenBy(y => y.Nazwa).ToList();
             }
 
+            ViewData["dataOd"] = this.DateTimeToString(filtr.DataOd);
+            ViewData["dataDo"] = this.DateTimeToString(filtr.DataDo);
+
             return PartialView("_ApartamentyLista", result);
+        }
+
+        public string DateTimeToString(DateTime date)
+        {
+            return date.ToString("dd-MM-yyyy");
         }
     }
 }

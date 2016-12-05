@@ -78,7 +78,7 @@
                 @Html.DisplayFor(modelItem => item.Ocena)
             </td>
             <td>
-                @Html.ActionLink("Rezerwuj", "Details", new { id = item.IdApartamentu })
+                @Html.ActionLink("Rezerwuj", "Apartament", new { Id = item.IdApartamentu, dataOd = ViewData["dataOd"], dataDo = ViewData["dataDo"] })
             </td>
         </tr>
     }

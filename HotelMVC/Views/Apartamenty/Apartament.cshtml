@@ -1,0 +1,162 @@
+﻿@model HotelMVC.Models.ApartamentyReservationViewModel
+
+@{
+    ViewBag.Title = "Zarezerwuj Apartament";
+}
+
+@section scripts {
+
+    <script type="text/javascript">
+        $(function () {
+            var minshowdate = new Date(@(DateTime.Now.AddMonths(-1).Year),
+                           @(DateTime.Now.AddMonths(-1).Month ),
+                           @(DateTime.Now.AddMonths(-1).Day));
+
+            $(".datepicker").datepicker({ dateFormat: 'dd-mm-yy', minDate: minshowdate });
+        });
+    </script>
+
+}
+
+<h2>Zarezerwuj Apartament</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.HiddenFor(model => model.IdApartamentu)
+
+    <div class="form-horizontal">
+        <h4>Wybierz datę i zarezerwuj apartament</h4>
+        <hr />
+
+        <div class="text-danger">@ViewData["errorInfo"]</div>
+        <p />
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DataOd, new { @class = "col-md-2 control-label", @style = "font-size:15px; font-weight:bold" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.DataOd, "{0:dd-MM-yyyy}", new { @class = "form-control datepicker" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.DataDo, new { @class = "col-md-2 control-label", @style = "font-size:15px; font-weight:bold" })
+            <div class="col-md-10">
+                @Html.TextBoxFor(model => model.DataDo, "{0:dd-MM-yyyy}", new { @class = "form-control datepicker" })
+            </div>
+        </div>
+
+        <dl class="dl-horizontal" style="margin-top:20px">
+            <dt>
+                @Html.DisplayNameFor(model => model.Nazwa)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Nazwa)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Ocena)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Ocena)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Cena)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Cena)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.IloscOsob)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.IloscOsob)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Opis)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Opis)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Udogodnienia)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Udogodnienia)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Ulica)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Ulica)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Miasto)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Miasto)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.KodPocztowy)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.KodPocztowy)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.WlascicielImieNazwisko)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.WlascicielImieNazwisko)
+            </dd>
+        </dl>
+
+        <div>
+            <div style="margin:15px">
+                <input type="submit" class="btn btn-default" value="REZERWUJ" />
+            </div>
+        </div>
+
+        <p>
+            @Html.ActionLink("Back to List", "Index")
+        </p>
+
+        <div>
+            <h4>Komentarze</h4>
+            @if (Model.Wizyty == null || !Model.Wizyty.Any(w => !String.IsNullOrEmpty(w.Komentarz)))
+            {
+                <p>Brak komentarzy</p>
+            }
+            else
+            {
+                foreach (var item in Model.Wizyty.Where(w => !String.IsNullOrEmpty(w.Komentarz)).OrderByDescending(d => d.DataOd))
+                {
+                    var wiz = new HotelMVC.Models.WizytyDisplayViewModel(item);
+                    <h6>@wiz.KlientImieNazwisko (wizyta @wiz.DataOd.ToShortDateString() - @wiz.DataDo.ToShortDateString()) skomentował(a):</h6>
+                    <p>
+                        Ocena: @wiz.Ocena
+                    </p>
+                    <p>
+                        @wiz.Komentarz
+                    </p>
+                }
+            }
+        </div>
+    </div>
+}

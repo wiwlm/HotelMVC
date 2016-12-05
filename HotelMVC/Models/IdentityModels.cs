@@ -64,5 +64,7 @@ namespace HotelMVC.Models
         {
             return new ApplicationDbContext();
         }
+
+        public System.Data.Entity.DbSet<HotelMVC.Models.Apartamenty> Apartamenties { get; set; }
     }
 }

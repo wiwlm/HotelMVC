@@ -129,7 +129,7 @@ namespace HotelMVC.Models
 
         [Display(Name = "Data wpłaty")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
-        public DateTime DataWplaty { get; set; }
+        public DateTime? DataWplaty { get; set; }
 
         [Display(Name = "Data od")]
         [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
