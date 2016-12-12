@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<HotelMVC.Models.ApartamentyDisplayViewModel>
 
 @{
-    ViewBag.Title = "MojeApartamenty";
+    ViewBag.Title = "Moje apartamenty";
 }
 
-<h2>MojeApartamenty</h2>
+<h2>@ViewBag.Title</h2>
 
 <p>
     @Html.ActionLink("Create New", "Create")
@@ -90,3 +90,14 @@
     }
 
 </table>
+
+<div>
+    @{
+        var name = "Moje wizyty";
+
+        if (ViewData["Oczekuje"] != null && (int)ViewData["Oczekuje"] > 0)
+        { name += " (" + ViewData["Oczekuje"] + " oczekuje na potwierdzenie)"; }
+
+        @Html.ActionLink(name, "MojeApartamentyWizyty")
+    }
+</div>

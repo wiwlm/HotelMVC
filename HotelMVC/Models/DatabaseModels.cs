@@ -124,27 +124,35 @@ namespace HotelMVC.Models
         public int IdApartamentu { get; set; }
 
         [Display(Name = "Data rezerwacji")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}")]
         public DateTime DataRezerwacji { get; set; }
 
         [Display(Name = "Data wpłaty")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}")]
         public DateTime? DataWplaty { get; set; }
 
         [Display(Name = "Data od")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}")]
         public DateTime DataOd { get; set; }
 
         [Display(Name = "Data do")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}")]
         public DateTime DataDo { get; set; }
 
+        public bool? Potwierdzona { get; set; }
+
         public string Komentarz { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}")]
+        public DateTime? DataKomentarz { get; set; }
 
         public int Ocena { get; set; }
 
         [Display(Name = "Odpowiedź")]
         public string Odpowiedz { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:MM-dd-yyyy}")]
+        public DateTime? DataOdpowiedz { get; set; }
 
         [MaxLength(128)]
         public string IdKlient { get; set; }

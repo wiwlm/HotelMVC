@@ -186,6 +186,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="GlobalObjects.cs" />
+    <Compile Include="Infrastructure\UprawnieniaAuth.cs" />
     <Compile Include="Migrations\201611221125458_InitialCreate.cs" />
     <Compile Include="Migrations\201611221125458_InitialCreate.Designer.cs">
       <DependentUpon>201611221125458_InitialCreate.cs</DependentUpon>
@@ -399,6 +401,9 @@
     <Content Include="Views\Account\Edit.cshtml" />
     <Content Include="Views\Apartamenty\_ApartamentyLista.cshtml" />
     <Content Include="Views\Apartamenty\Apartament.cshtml" />
+    <Content Include="Views\Apartamenty\_Komentarz.cshtml" />
+    <Content Include="Views\Apartamenty\_Odpowiedz.cshtml" />
+    <Content Include="Views\Apartamenty\MojeApartamentyWizyty.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

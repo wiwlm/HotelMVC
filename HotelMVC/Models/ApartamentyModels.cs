@@ -68,6 +68,9 @@ namespace HotelMVC.Models
                 var store = new UserStore<ApplicationUser>(new ApplicationDbContext());
                 var userManager = new UserManager<ApplicationUser>(store);
                 ApplicationUser user = userManager.FindById(this.IdWlasciciel);
+
+                if (user == null) return "";
+
                 return user.Name + " " + user.Surname;
             }
         }
@@ -91,7 +94,7 @@ namespace HotelMVC.Models
                 if (this.Wizyty == null)
                     return 0;
                 else
-                    return this.Wizyty.Count(w => w.DataDo > DateTime.Today);
+                    return this.Wizyty.Count(w => w.DataDo < DateTime.Today && w.Potwierdzona == true);
             }
         }
 
@@ -100,10 +103,10 @@ namespace HotelMVC.Models
         {
             get
             {
-                if (this.Wizyty == null)
+                if (this.Wizyty == null || !this.Wizyty.Any(w => w.Ocena != 0))
                     return 0M;
                 else
-                    return this.Wizyty.Average(u => (decimal)u.Ocena);
+                    return this.Wizyty.Where(w => w.Ocena != 0).Average(u => (decimal)u.Ocena);
             }
         }
     }
@@ -116,12 +119,12 @@ namespace HotelMVC.Models
 
         [Display(Name = "Data od")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM-dd-yy}")]
         public DateTime DataOd { get; set; }
 
         [Display(Name = "Data do")]
         [DataType(DataType.Date)]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM-dd-yy}")]
         public DateTime DataDo { get; set; }
     }
 
@@ -137,12 +140,15 @@ namespace HotelMVC.Models
             this.DataOd = w.DataOd;
             this.DataRezerwacji = w.DataRezerwacji;
             this.DataWplaty = w.DataWplaty;
+            this.DataKomentarz = w.DataKomentarz;
+            this.DataOdpowiedz = w.DataOdpowiedz;
             this.IdApartamentu = w.IdApartamentu;
             this.IdKlient = w.IdKlient;
             this.IdWizyty = w.IdWizyty;
             this.Komentarz = w.Komentarz;
             this.Ocena = w.Ocena;
             this.Odpowiedz = w.Odpowiedz;
+            this.Potwierdzona = w.Potwierdzona;
         }
 
         [Display(Name = "Klient")]
@@ -154,6 +160,17 @@ namespace HotelMVC.Models
                 var userManager = new UserManager<ApplicationUser>(store);
                 ApplicationUser user = userManager.FindById(this.IdKlient);
                 return user.Name + " " + user.Surname;
+            }
+        }
+
+        [Display(Name = "Potwierdzona")]
+        public string PotwierdzonaString
+        {
+            get
+            {
+                if (this.Potwierdzona == true) return "Tak";
+                else if (this.Potwierdzona == false) return "Nie";
+                else  return "Oczekuje";
             }
         }
     }

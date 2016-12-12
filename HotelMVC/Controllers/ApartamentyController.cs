@@ -11,13 +11,17 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using LinqKit;
 using System.Globalization;
+using HotelMVC.Infrastructure;
+using System.Web.Routing;
 
 namespace HotelMVC.Controllers
 {
+    [Authorize]
     public class ApartamentyController : Controller
     {
         private EntityContext db = new EntityContext();
 
+        [AllowAnonymous]
         // GET: Apartamenty
         public ActionResult Index()
         {
@@ -39,6 +43,7 @@ namespace HotelMVC.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult Index(ApartamentyFilterViewModel model)
         {
@@ -55,19 +60,21 @@ namespace HotelMVC.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
         public ActionResult Apartament(int Id, string dataOd, string dataDo)
         {
-            var ap = db.Apartamenty.Include("UdogodnieniaApartamenty.Udogodnienie").First(x => x.IdApartamentu == Id);
+            var ap = db.Apartamenty.Include("Wizyty").Include("UdogodnieniaApartamenty.Udogodnienie").First(x => x.IdApartamentu == Id);
 
             var model = new ApartamentyReservationViewModel(ap)
             {
-                DataOd = DateTime.Parse(dataDo),
-                DataDo = DateTime.Parse(dataDo)
+                DataOd = this.StringToDateTime(dataOd),
+                DataDo = this.StringToDateTime(dataDo),
             };
 
             return View(model);
         }
 
+        [AllowAnonymous]
         [HttpPost]
         public ActionResult Apartament(ApartamentyReservationViewModel model)
         {
@@ -83,6 +90,19 @@ namespace HotelMVC.Controllers
             }
 
             var ap = db.Apartamenty.Include("UdogodnieniaApartamenty.Udogodnienie").First(x => x.IdApartamentu == model.IdApartamentu);
+
+            if (model.DataOd > model.DataDo)
+            {
+                ViewData["errorInfo"] = "Nie można zarezerwować apartamentu. Data od jest większa niż data do.";
+
+                model = new ApartamentyReservationViewModel(ap)
+                {
+                    DataOd = model.DataOd,
+                    DataDo = model.DataDo
+                };
+
+                return View(model);
+            }
 
             if (db.Wizyty == null || !db.Wizyty.Any(w => w.IdApartamentu == model.IdApartamentu && !(w.DataOd > model.DataDo || w.DataDo < model.DataOd)))
             {
@@ -104,7 +124,7 @@ namespace HotelMVC.Controllers
             }
             else
             {
-                ViewData["errorInfo"] = "Nie można zarezerwować apartamentu. W dniach " + model.DataOd.ToShortDateString() + " - " + model.DataDo.ToShortDateString() + " jest on niedostępny.";
+                ViewData["errorInfo"] = "Nie można zarezerwować apartamentu. W dniach " + DateTimeToString(model.DataOd) + " - " + DateTimeToString(model.DataDo) + " jest on niedostępny.";
 
                 model = new ApartamentyReservationViewModel(ap)
                 {
@@ -116,19 +136,31 @@ namespace HotelMVC.Controllers
             }
         }
 
+        [WlascicielAuth]
         public ActionResult MojeApartamenty()
         {
             List<ApartamentyDisplayViewModel> ap =
                 db.Apartamenty
+                .Include("Wizyty")
                 .Include("UdogodnieniaApartamenty.Udogodnienie").ToList()
                 .Where(a => a.IdWlasciciel == User.Identity.GetUserId())
                 .Select(a => new ApartamentyDisplayViewModel(a)).ToList();
 
+            if (ap.SelectMany(a => a.Wizyty).Any(w => w.Potwierdzona == null))
+            {
+                ViewData["Oczekuje"] = ap.SelectMany(a => a.Wizyty).Count(w => w.Potwierdzona == null);
+            }
+
             return View(ap);
         }
 
-        public ActionResult MojeWizyty()
+        public ActionResult MojeWizyty(int? Id)
         {
+            if (Id.HasValue)
+            {
+                ViewData["idWizyty"] = Id.Value;
+            }
+
             List<WizytyDisplayViewModel> wiz =
                 db.Wizyty.Include("Apartament").ToList()
                 .Where(w => w.IdKlient == User.Identity.GetUserId())
@@ -137,20 +169,102 @@ namespace HotelMVC.Controllers
             return View(wiz);
         }
 
-        // GET: Apartamenty/Details/5
-        public ActionResult Details(int? id)
+        [WlascicielAuth]
+        public ActionResult MojeApartamentyWizyty(int? Id)
         {
+            if (Id.HasValue)
+            {
+                ViewData["idWizyty"] = Id.Value;
+            }
+
+            List<WizytyDisplayViewModel> wiz =
+                db.Wizyty.Include("Apartament").ToList()
+                .Where(w => w.Apartament.IdWlasciciel == User.Identity.GetUserId())
+                .OrderBy(x => x.Potwierdzona)
+                .ThenBy(y => y.DataOd)
+                .Select(w => new WizytyDisplayViewModel(w)).ToList();
+
+            return View(wiz);
+        }
+
+        public ActionResult Potwierdz(int? Id)
+        {
+            if (Id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Wizyty wiz = db.Wizyty.Include("Apartament").ToList().First(w => w.IdWizyty == Id);
+
+            if (wiz == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (wiz.Apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            wiz.Potwierdzona = true;
+            db.SaveChanges();
+
+            return RedirectToAction("MojeApartamentyWizyty");
+        }
+
+        public ActionResult Odrzuc(int? Id)
+        {
+            if (Id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Wizyty wiz = db.Wizyty.Include("Apartament").ToList().First(w => w.IdWizyty == Id);
+
+            if (wiz == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (wiz.Apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            wiz.Potwierdzona = true;
+            db.SaveChanges();
+
+            return RedirectToAction("MojeApartamentyWizyty");
+        }
+
+        [WlascicielAuth]
+        // GET: Apartamenty/Details/5
+        public ActionResult Details(int? id, int? idWizyty)
+        {
+            if (idWizyty.HasValue)
+            {
+                ViewData["idWizyty"] = idWizyty.Value;
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Apartamenty apartament =
                 db.Apartamenty
+                .Include("Wizyty")
                 .Include("UdogodnieniaApartamenty.Udogodnienie")
                 .First(x => x.IdApartamentu == id);
+
             if (apartament == null)
             {
                 return HttpNotFound();
+            }
+
+            if (apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
             ApartamentyDisplayViewModel ap = new ApartamentyDisplayViewModel(apartament);
@@ -158,6 +272,7 @@ namespace HotelMVC.Controllers
             return View(ap);
         }
 
+        [WlascicielAuth]
         // GET: Apartamenty/Create
         public ActionResult Create()
         {
@@ -172,9 +287,7 @@ namespace HotelMVC.Controllers
             return View(model);
         }
 
-        // POST: Apartamenty/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [WlascicielAuth]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(ApartamentyEditViewModel model)
@@ -208,6 +321,7 @@ namespace HotelMVC.Controllers
         }
 
         // GET: Apartamenty/Edit/5
+        [WlascicielAuth]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -222,6 +336,11 @@ namespace HotelMVC.Controllers
                 return HttpNotFound();
             }
 
+            if (apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
             ApartamentyEditViewModel model = new ApartamentyEditViewModel()
             {
                 Apartament = apartament,
@@ -234,9 +353,7 @@ namespace HotelMVC.Controllers
             return View(model);
         }
 
-        // POST: Apartamenty/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [WlascicielAuth]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(ApartamentyEditViewModel model)
@@ -246,6 +363,11 @@ namespace HotelMVC.Controllers
                 Apartamenty ap_new = model.Apartament;
 
                 Apartamenty ap_old = db.Apartamenty.Find(ap_new.IdApartamentu);
+
+                if (ap_old.IdWlasciciel != User.Identity.GetUserId())
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+                }
 
                 ap_old.Cena = ap_new.Cena;
                 ap_old.IloscOsob = ap_new.IloscOsob;
@@ -285,6 +407,7 @@ namespace HotelMVC.Controllers
             return View(model);
         }
 
+        [WlascicielAuth]
         // GET: Apartamenty/Delete/5
         public ActionResult Delete(int? id)
         {
@@ -292,13 +415,20 @@ namespace HotelMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
+
             Apartamenty apartament =
                 db.Apartamenty
                 .Include("UdogodnieniaApartamenty.Udogodnienie")
                 .First(x => x.IdApartamentu == id);
+
             if (apartament == null)
             {
                 return HttpNotFound();
+            }
+
+            if (apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
             ApartamentyDisplayViewModel ap = new ApartamentyDisplayViewModel(apartament);
@@ -307,11 +437,18 @@ namespace HotelMVC.Controllers
         }
 
         // POST: Apartamenty/Delete/5
+        [WlascicielAuth]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
             Apartamenty apartament = db.Apartamenty.Find(id);
+
+            if (apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
             db.Apartamenty.Remove(apartament);
             db.SaveChanges();
             return RedirectToAction("MojeApartamenty");
@@ -326,6 +463,7 @@ namespace HotelMVC.Controllers
             base.Dispose(disposing);
         }
 
+        [AllowAnonymous]
         [ChildActionOnly]
         public ActionResult ApartamentyLista(ApartamentyFilterViewModel filtr)
         {
@@ -337,7 +475,7 @@ namespace HotelMVC.Controllers
             if (filtr.IleOsob.HasValue && filtr.IleOsob != 0) { predicate1 = predicate1.And(a => a.IloscOsob == filtr.IleOsob); }
 
             var predicate2 = PredicateBuilder.New<Apartamenty>(true);
-            predicate2 = predicate2.And(a => a.Wizyty == null || !a.Wizyty.Any(w => !(w.DataOd > filtr.DataDo || w.DataDo < filtr.DataOd)));
+            predicate2 = predicate2.And(a => a.Wizyty == null || !a.Wizyty.Any(w => w.Potwierdzona != false && !(w.DataOd > filtr.DataDo || w.DataDo < filtr.DataOd)));
 
             if (filtr.WybraneUdogodeniniaIds != null)
                 foreach (var item in filtr.WybraneUdogodeniniaIds)
@@ -346,6 +484,7 @@ namespace HotelMVC.Controllers
                 }
 
             var result = db.Apartamenty.Where(predicate1)
+                .Include("Wizyty")
                 .Include("UdogodnieniaApartamenty.Udogodnienie").ToList()
                 .Where(predicate2)
                 .Select(a => new ApartamentyDisplayViewModel(a));
@@ -361,9 +500,134 @@ namespace HotelMVC.Controllers
             return PartialView("_ApartamentyLista", result);
         }
 
+        [ChildActionOnly]
+        public ActionResult Komentarz(int Id)
+        {
+            if (Id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Wizyty wiz = db.Wizyty.Include("Apartament").ToList().First(w => w.IdWizyty == Id);
+
+            if (wiz == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (wiz.IdKlient != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            WizytyDisplayViewModel rez = new WizytyDisplayViewModel(wiz);
+
+            ViewData["OcenaList"] = new List<SelectListItem>()
+            {
+                new SelectListItem() {Value = "5", Text = "5" },
+                new SelectListItem() {Value = "4", Text = "4" },
+                new SelectListItem() {Value = "3", Text = "3" },
+                new SelectListItem() {Value = "2", Text = "2" },
+                new SelectListItem() {Value = "1", Text = "1" },
+        };
+
+            return PartialView("_Komentarz", rez);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Komentarz(WizytyDisplayViewModel model)
+        {
+            if (model.IdWizyty == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Wizyty wiz = db.Wizyty.Include("Apartament").ToList().First(w => w.IdWizyty == model.IdWizyty);
+
+            if (wiz == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (wiz.IdKlient != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            wiz.Komentarz = model.Komentarz;
+            wiz.Ocena = model.Ocena;
+            wiz.DataKomentarz = DateTime.Now;
+
+            db.SaveChanges();
+            return RedirectToAction("MojeWizyty");
+        }
+
+        [WlascicielAuth]
+        [ChildActionOnly]
+        public ActionResult Odpowiedz(int Id)
+        {
+            if (Id == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Wizyty wiz = db.Wizyty.Include("Apartament").ToList().First(w => w.IdWizyty == Id);
+
+            if (wiz == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (wiz.Apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            WizytyDisplayViewModel rez = new WizytyDisplayViewModel(wiz);
+
+
+            return PartialView("_Odpowiedz", rez);
+        }
+
+        [WlascicielAuth]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Odpowiedz(WizytyDisplayViewModel model)
+        {
+            if (model.IdWizyty == 0)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Wizyty wiz = db.Wizyty.Include("Apartament").ToList().First(w => w.IdWizyty == model.IdWizyty);
+
+            if (wiz == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (wiz.Apartament.IdWlasciciel != User.Identity.GetUserId())
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
+            }
+
+            wiz.Odpowiedz = model.Odpowiedz;
+            wiz.DataOdpowiedz = DateTime.Now;
+
+            db.SaveChanges();
+            
+            return RedirectToRoute("MojeApartamentyWizyty");
+        }
+
         public string DateTimeToString(DateTime date)
         {
-            return date.ToString("dd-MM-yyyy");
+            return date.ToString("MM-dd-yyyy");
+        }
+
+        public DateTime StringToDateTime(string date)
+        {
+            return DateTime.ParseExact(date, "MM-dd-yyyy", System.Globalization.CultureInfo.CurrentCulture);
         }
     }
 }

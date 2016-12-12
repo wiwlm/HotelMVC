@@ -1,16 +1,16 @@
 ﻿@model HotelMVC.Models.IndexViewModel
 @{
-    ViewBag.Title = "Manage";
+    ViewBag.Title = "Ustawienia konta";
 }
 
-<h2>@ViewBag.Title.</h2>
+<h2>@ViewBag.Title</h2>
 
 <p class="text-success">@ViewBag.StatusMessage</p>
 <div>
     @using (Html.BeginForm("Index", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
     {
         @Html.AntiForgeryToken()
-        <h4>Change your account settings</h4>
+        <h4>Zmień ustawienia swojego konta</h4>
         <hr />
         @Html.ValidationSummary("", new { @class = "text-danger" })
         <div class="form-group">
@@ -33,16 +33,16 @@
         </div>
 
         <dl class="dl-horizontal">
-            <dt>Password:</dt>
+            <dt>Hasło:</dt>
             <dd>
                 [
                 @if (Model.HasPassword)
                 {
-                    @Html.ActionLink("Change your password", "ChangePassword")
+                    @Html.ActionLink("Zmień hasło", "ChangePassword")
                 }
                 else
                 {
-                    @Html.ActionLink("Create", "SetPassword")
+                    @Html.ActionLink("Utwórz hasło", "SetPassword")
                 }
                 ]
             </dd>

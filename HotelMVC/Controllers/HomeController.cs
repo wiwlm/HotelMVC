@@ -15,14 +15,14 @@ namespace HotelMVC.Controllers
 
         public ActionResult About()
         {
-            ViewBag.Message = "Your application description page.";
+            ViewBag.Message = "Sieć ponad 1000 apartamentów w całej Polsce!";
             
             return View();
         }
 
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            ViewBag.Message = "Skontaktuj się z nami!";
 
             return View();
         }

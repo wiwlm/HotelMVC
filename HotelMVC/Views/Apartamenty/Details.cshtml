@@ -1,13 +1,13 @@
 ﻿@model HotelMVC.Models.ApartamentyDisplayViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Szczegóły";
 }
 
-<h2>Details</h2>
+<h2>@ViewBag.Title</h2>
 
 <div>
-    <h4>Apartamenty</h4>
+    <h4>Apartament</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -93,8 +93,8 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.IdApartamentu }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Edytuj", "Edit", new { id = Model.IdApartamentu }) |
+    @Html.ActionLink("Powrót do listy apartamentów", "Index")
 </p>
 
 <div>
@@ -107,14 +107,38 @@
     {
         foreach (var item in Model.Wizyty.Where(w => !String.IsNullOrEmpty(w.Komentarz)).OrderByDescending(d => d.DataOd))
         {
+            <hr />
+
             var wiz = new HotelMVC.Models.WizytyDisplayViewModel(item);
-            <h6>@wiz.KlientImieNazwisko (wizyta @wiz.DataOd.ToShortDateString() - @wiz.DataDo.ToShortDateString()) skomentował(a):</h6>
+            <i>@wiz.KlientImieNazwisko (wizyta @wiz.DataOd.ToShortDateString() - @wiz.DataDo.ToShortDateString()) skomentował(a) (@Html.DisplayFor(modelItem => item.DataKomentarz)):</i>
             <p>
-                Ocena: @wiz.Ocena
+                <b>Ocena:</b> @wiz.Ocena
             </p>
             <p>
                 @wiz.Komentarz
             </p>
+            <div style="margin-left:20px">
+                @if (String.IsNullOrEmpty(item.Odpowiedz))
+                {
+                    if (ViewData["idWizyty"] == null || (int)ViewData["idWizyty"] != item.IdWizyty)
+                    {
+                        @Html.ActionLink("Dodaj odpowiedź", "Details", new { id = item.IdApartamentu, idWizyty = item.IdWizyty })
+                    }
+                    else
+                    {
+                        @Html.Action("Odpowiedz", new { id = item.IdWizyty })
+                    }
+                }
+                else
+                {
+
+                    <i> Odpowiedź właściciela (@Html.DisplayFor(modelItem => item.DataOdpowiedz)):</i>
+                    <p>
+                        @Html.DisplayFor(modelItem => item.Odpowiedz)
+                    </p>
+
+                }
+            </div>
         }
     }
 </div>

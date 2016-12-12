@@ -1,7 +1,7 @@
 ﻿@model HotelMVC.Models.ApartamentyReservationViewModel
 
 @{
-    ViewBag.Title = "Zarezerwuj Apartament";
+    ViewBag.Title = "Zarezerwuj apartament";
 }
 
 @section scripts {
@@ -12,13 +12,13 @@
                            @(DateTime.Now.AddMonths(-1).Month ),
                            @(DateTime.Now.AddMonths(-1).Day));
 
-            $(".datepicker").datepicker({ dateFormat: 'dd-mm-yy', minDate: minshowdate });
+            $(".datepicker").datepicker({ dateFormat: 'mm-dd-yy', minDate: minshowdate });
         });
     </script>
 
 }
 
-<h2>Zarezerwuj Apartament</h2>
+<h2>@ViewBag.Title</h2>
 
 @using (Html.BeginForm())
 {
@@ -34,14 +34,14 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DataOd, new { @class = "col-md-2 control-label", @style = "font-size:15px; font-weight:bold" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.DataOd, "{0:dd-MM-yyyy}", new { @class = "form-control datepicker" })
+                @Html.TextBoxFor(model => model.DataOd, "{0:MM-dd-yyyy}", new { @class = "form-control datepicker" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.LabelFor(model => model.DataDo, new { @class = "col-md-2 control-label", @style = "font-size:15px; font-weight:bold" })
             <div class="col-md-10">
-                @Html.TextBoxFor(model => model.DataDo, "{0:dd-MM-yyyy}", new { @class = "form-control datepicker" })
+                @Html.TextBoxFor(model => model.DataDo, "{0:MM-dd-yyyy}", new { @class = "form-control datepicker" })
             </div>
         </div>
 
@@ -134,7 +134,7 @@
         </div>
 
         <p>
-            @Html.ActionLink("Back to List", "Index")
+            @Html.ActionLink("Wróć do wyszukiwania", "Index")
         </p>
 
         <div>

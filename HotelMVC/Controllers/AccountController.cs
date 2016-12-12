@@ -11,6 +11,7 @@ using Microsoft.Owin.Security;
 using HotelMVC.Models;
 using System.Collections.Generic;
 using System.Net;
+using HotelMVC.Infrastructure;
 
 namespace HotelMVC.Controllers
 {
@@ -54,6 +55,7 @@ namespace HotelMVC.Controllers
             }
         }
 
+        [AdminAuth]
         public ActionResult UserList(string returnUrl)
         {
             return View(UserManager.Users);
@@ -93,7 +95,7 @@ namespace HotelMVC.Controllers
                     return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
                 case SignInStatus.Failure:
                 default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
+                    ModelState.AddModelError("", "Nieudana próba logowania.");
                     return View(model);
             }
         }
@@ -158,7 +160,7 @@ namespace HotelMVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Imie, Surname = model.Nazwisko, Uprawnienie = 3 };
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, Name = model.Imie, Surname = model.Nazwisko, Uprawnienie = 1 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -172,6 +174,7 @@ namespace HotelMVC.Controllers
             return View(model);
         }
 
+        [AdminAuth]
         public ActionResult Create()
         {
             ViewData["UprawnieniaList"] = new List<SelectListItem>()
@@ -186,6 +189,7 @@ namespace HotelMVC.Controllers
 
         //
         // POST: /Account/Register
+        [AdminAuth]
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -206,6 +210,7 @@ namespace HotelMVC.Controllers
             return View(model);
         }
 
+        [AdminAuth]
         public ActionResult Edit(string id)
         {
             if (id == null)
@@ -219,7 +224,7 @@ namespace HotelMVC.Controllers
             {
                 return HttpNotFound();
             }
-            
+
             ViewData["UprawnieniaList"] = new List<SelectListItem>()
             {
                 new SelectListItem() {Value = "1", Text = "Admin" },
@@ -234,6 +239,7 @@ namespace HotelMVC.Controllers
 
         //
         // POST: /Account/Register
+        [AdminAuth]
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -247,7 +253,7 @@ namespace HotelMVC.Controllers
                 user.Name = model.Imie;
                 user.Surname = model.Nazwisko;
                 user.Uprawnienie = model.Uprawnienie;
-                
+
                 var result = await UserManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
@@ -255,7 +261,7 @@ namespace HotelMVC.Controllers
                 }
                 AddErrors(result);
             }
-             
+
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -491,6 +497,7 @@ namespace HotelMVC.Controllers
             return View();
         }
 
+        [AdminAuth]
         public ActionResult Delete(string id)
         {
             if (id == null)
@@ -509,6 +516,7 @@ namespace HotelMVC.Controllers
         }
 
         // POST: Apartamenty/Delete/5
+        [AdminAuth]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(string id)

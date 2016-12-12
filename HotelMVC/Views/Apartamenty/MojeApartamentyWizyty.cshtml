@@ -1,0 +1,115 @@
+﻿@model IEnumerable<HotelMVC.Models.WizytyDisplayViewModel>
+
+@{
+    ViewBag.Title = "Wizyty w moich apratamentach";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Apartament)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KlientImieNazwisko)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataRezerwacji)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataWplaty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataOd)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DataDo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PotwierdzonaString)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Komentarz)
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apartament.Nazwa)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.KlientImieNazwisko)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataRezerwacji)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataWplaty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataOd)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DataDo)
+            </td>
+            <td>
+                @if (item.Potwierdzona == null)
+                {
+                    <text>
+                        @Html.ActionLink("Potwierdź", "Potwierdz", new { id = item.IdWizyty })
+                        | @Html.ActionLink("Odrzuć", "Odrzuc", new { id = item.IdWizyty })
+                    </text>
+
+                }
+                else
+                {
+                    @Html.DisplayFor(modelItem => item.PotwierdzonaString)
+                }
+            </td>
+            <td>
+                @if (!String.IsNullOrEmpty(item.Komentarz))
+                {
+                    <i>Komentarz z dnia @Html.DisplayFor(modelItem => item.DataKomentarz):</i>
+                    <p>
+                        <b>Ocena:</b> @item.Ocena
+                    </p>
+                    <p>
+                        @item.Komentarz
+                    </p>
+                    <div style="margin-left:20px">
+                        @if (String.IsNullOrEmpty(item.Odpowiedz))
+                        {
+                            if (ViewData["idWizyty"] == null || (int)ViewData["idWizyty"] != item.IdWizyty)
+                            {
+                                @Html.ActionLink("Dodaj odpowiedź", "MojeApartamentyWizyty", new { Id = item.IdWizyty })
+                            }
+                        }
+                        else
+                        {
+                            <i> Odpowiedź właściciela (@Html.DisplayFor(modelItem => item.DataOdpowiedz)):</i>
+                            <p>
+                                @Html.DisplayFor(modelItem => item.Odpowiedz)
+                            </p>
+                        }
+                    </div>
+                }
+            </td>
+
+        </tr>
+        if (String.IsNullOrEmpty(item.Odpowiedz) && ViewData["idWizyty"] != null && (int)ViewData["idWizyty"] == item.IdWizyty)
+        {
+            <tr>
+                <td colspan="7">
+                    @Html.Action("Odpowiedz", new { id = item.IdWizyty })
+                </td>
+            </tr>
+        }
+    }
+
+</table>
+<p>
+    @Html.ActionLink("Powrót do listy apartamentów", "MojeApartamenty")
+</p>

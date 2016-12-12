@@ -1,0 +1,44 @@
+﻿@model HotelMVC.Models.WizytyDisplayViewModel
+
+@{
+    ViewBag.Title = "Komentarz";
+}
+
+@using (Html.BeginForm("Komentarz", "Apartamenty"))
+{
+    @Html.AntiForgeryToken()
+
+
+    <table style="width:100%" border="0">
+        <tr>
+            <td>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Komentarz, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.TextAreaFor(model => model.Komentarz, 3, 200, new { @class = "form-control", @style = "max-width: 100%; width:100%" })
+                    </div>
+                </div>
+            </td>
+            <td style="width:300px">
+                <div class="form-horizontal">
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+                    @Html.HiddenFor(model => model.IdWizyty)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Ocena, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-10">
+                            @Html.DropDownListFor(model => model.Ocena, (IEnumerable<SelectListItem>)ViewData["OcenaList"], new { @class = "form-control", @style = "width:100px" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" value="Dodaj komentarz" class="btn btn-default" />
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+}

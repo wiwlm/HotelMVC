@@ -1,21 +1,15 @@
 ﻿@model IEnumerable<HotelMVC.Models.WizytyDisplayViewModel>
 
 @{
-    ViewBag.Title = "MojeWizyty";
+    ViewBag.Title = "Moje wizyty";
 }
 
-<h2>MojeWizyty</h2>
+<h2>@ViewBag.Title</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Apartament.Nazwa)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.KlientImieNazwisko)
+            @Html.DisplayNameFor(model => model.Apartament)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.DataRezerwacji)
@@ -30,15 +24,11 @@
             @Html.DisplayNameFor(model => model.DataDo)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.PotwierdzonaString)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.Komentarz)
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Ocena)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Odpowiedz)
-        </th>
-        <th></th>
     </tr>
 
     @foreach (var item in Model)
@@ -46,9 +36,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Apartament.Nazwa)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.KlientImieNazwisko)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.DataRezerwacji)
@@ -63,21 +50,52 @@
                 @Html.DisplayFor(modelItem => item.DataDo)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Komentarz)
+                @Html.DisplayFor(modelItem => item.PotwierdzonaString)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Ocena)
+                @if (String.IsNullOrEmpty(item.Komentarz))
+                {
+                    var wizytaZakonczona = item.DataDo < DateTime.Today;
+                    var wizytaOdrzucona = item.Potwierdzona == false;
+
+
+                    if ((!wizytaZakonczona || wizytaOdrzucona) && (ViewData["idWizyty"] == null || (int)ViewData["idWizyty"] != item.IdWizyty))
+                    {
+                        @Html.ActionLink("Dodaj komentarz", "MojeWizyty", new { Id = item.IdWizyty })
+                    }
+                }
+                else
+                {
+                    if (item.Ocena != 0)
+                    {
+                        <p>
+                            <b> Ocena:</b> @Html.DisplayFor(modelItem => item.Ocena)
+                        </p>
+                    }
+
+                    <b>Komentarz:</b> @Html.DisplayFor(modelItem => item.Komentarz)
+
+                    if (!String.IsNullOrEmpty(item.Odpowiedz))
+                    {
+                        <div style="margin-left:20px">
+                            <i> Odpowiedź właściciela (@Html.DisplayFor(modelItem => item.DataOdpowiedz)):</i>
+                            <p>
+                                @Html.DisplayFor(modelItem => item.Odpowiedz)
+                            </p>
+                        </div>
+                    }
+                }
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Odpowiedz)
-            </td>
-            @if (String.IsNullOrEmpty(item.Komentarz))
-            {
-            <td>
-                @Html.ActionLink("Dodaj komentarz", "Edit", new { id = item.IdWizyty })
-            </td>
-            }
+
         </tr>
+        if (String.IsNullOrEmpty(item.Komentarz) && ViewData["idWizyty"] != null && (int)ViewData["idWizyty"] == item.IdWizyty)
+        {
+            <tr>
+                <td colspan="6">
+                    @Html.Action("Komentarz", new { id = item.IdWizyty })
+                </td>
+            </tr>
+        }
     }
 
 </table>
