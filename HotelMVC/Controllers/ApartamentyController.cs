@@ -491,7 +491,7 @@ namespace HotelMVC.Controllers
 
             if (result.Any())
             {
-                result = result.OrderBy(x => x.Ocena).ThenBy(y => y.Nazwa).ToList();
+                result = result.OrderByDescending(x => x.Ocena).ThenBy(y => y.Nazwa).ToList();
             }
 
             ViewData["dataOd"] = this.DateTimeToString(filtr.DataOd);
