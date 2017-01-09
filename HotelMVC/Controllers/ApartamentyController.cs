@@ -187,6 +187,7 @@ namespace HotelMVC.Controllers
             return View(wiz);
         }
 
+        [WlascicielAuth]
         public ActionResult Potwierdz(int? Id)
         {
             if (Id == 0)
@@ -212,6 +213,7 @@ namespace HotelMVC.Controllers
             return RedirectToAction("MojeApartamentyWizyty");
         }
 
+        [WlascicielAuth]
         public ActionResult Odrzuc(int? Id)
         {
             if (Id == 0)
@@ -231,7 +233,7 @@ namespace HotelMVC.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
             }
 
-            wiz.Potwierdzona = true;
+            wiz.Potwierdzona = false;
             db.SaveChanges();
 
             return RedirectToAction("MojeApartamentyWizyty");

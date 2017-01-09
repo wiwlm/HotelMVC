@@ -191,7 +191,6 @@ namespace HotelMVC.Controllers
         // POST: /Account/Register
         [AdminAuth]
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(RegisterViewModel model)
         {
@@ -207,6 +206,13 @@ namespace HotelMVC.Controllers
             }
 
             // If we got this far, something failed, redisplay form
+            ViewData["UprawnieniaList"] = new List<SelectListItem>()
+            {
+                new SelectListItem() {Value = "1", Text = "Admin" },
+                new SelectListItem() {Value = "2", Text = "Właściciel" },
+                new SelectListItem() {Value = "3", Text = "Użytkownik" }
+            };
+
             return View(model);
         }
 
@@ -241,7 +247,6 @@ namespace HotelMVC.Controllers
         // POST: /Account/Register
         [AdminAuth]
         [HttpPost]
-        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditUserViewModel model)
         {
@@ -261,6 +266,13 @@ namespace HotelMVC.Controllers
                 }
                 AddErrors(result);
             }
+
+            ViewData["UprawnieniaList"] = new List<SelectListItem>()
+            {
+                new SelectListItem() {Value = "1", Text = "Admin" },
+                new SelectListItem() {Value = "2", Text = "Właściciel" },
+                new SelectListItem() {Value = "3", Text = "Użytkownik" }
+            };
 
             // If we got this far, something failed, redisplay form
             return View(model);
@@ -515,7 +527,6 @@ namespace HotelMVC.Controllers
             return View(user);
         }
 
-        // POST: Apartamenty/Delete/5
         [AdminAuth]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
